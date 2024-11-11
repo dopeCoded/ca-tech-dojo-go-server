@@ -125,10 +125,11 @@ func drawGacha(times int) ([]GachaResult, error) {
 	}
 
 	// ガチャを引く
-	rand.Seed(time.Now().UnixNano())
+	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
+	
 	var results []GachaResult
 	for i := 0; i < times; i++ {
-		r := rand.Float64() * totalProbability
+		r := rnd.Float64() * totalProbability
 		var cumulative float64
 		for _, item := range items {
 			cumulative += item.Probability
