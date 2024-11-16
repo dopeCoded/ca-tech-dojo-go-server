@@ -20,11 +20,6 @@ type gachaRepository struct {
 	db *sql.DB
 }
 
-// NewGachaRepository は新しい GachaRepository を生成します。
-func NewGachaRepository(db *sql.DB) GachaRepository {
-	return &gachaRepository{db}
-}
-
 // GetGachaItems はガチャに使用されるキャラクターとその確率を取得します。
 // 戻り値にはキャラクターのリストと全確率の合計が含まれます。
 func (r *gachaRepository) GetGachaItems() ([]model.GachaProbability, float64, error) {
@@ -81,34 +76,6 @@ func (r *gachaRepository) AddUserCharacters(userID int64, characterIDs []int64) 
 	}
 
 	return tx.Commit()
-}
-
-// GetUserCharacters は指定されたユーザーが所持するキャラクターを取得します。
-func (r *gachaRepository) GetUserCharacters(userID int64) ([]model.UserCharacter, error) {
-	rows, err := r.db.Query(`
-		SELECT id, user_id, character_id, acquired_at
-		FROM user_characters
-		WHERE user_id = ?
-	`, userID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var userCharacters []model.UserCharacter
-	for rows.Next() {
-		var uc model.UserCharacter
-		if err := rows.Scan(&uc.ID, &uc.UserID, &uc.CharacterID, &uc.AcquiredAt); err != nil {
-			return nil, err
-		}
-		userCharacters = append(userCharacters, uc)
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return userCharacters, nil
 }
 
 // GetCharacterName は指定されたキャラクターIDに対応するキャラクター名を取得します。
