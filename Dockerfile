@@ -9,7 +9,7 @@ RUN go mod download
 
 # ソースコードをコピーしてビルド
 COPY . .
-RUN go build -o main .
+RUN go build -o main ./cmd
 
 # 実行ステージ
 FROM alpine:latest
